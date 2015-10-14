@@ -1,24 +1,33 @@
 from collections import Counter
+from random import randrange
+
+def most_common(lst):
+    data = Counter(lst)
+    return data.most_common(1)[0][1]
 
 def answer(x):
-    result = x
-    equal = False
-    if sum(x) % len(x) > 0:
-        spread = sum(x) - 1
-        for idx in xrange(len(x)):
-            result[idx] = spread % len(x)
-        result[-1] -= 1
-    else:
-        while not equal:
-            for idx, item in enumerate(x):
-                result[idx] = sum(x)/len(x)
-            equal = True
-    if equal:
-        return len(result)
-    else:
-        print "odd", result
-        a = Counter(result)
-        return a.most_common(1)[0][1]
+    """The goal is to take all of the rabbits in list x and distribute
+    them equally across the original list elements."""
+    total = sum(x)
+    length = len(x)
+    # Find out how many are left over when distributing niavely.
+    div, mod = divmod(total, length)
+    # Because of the variable size of the list, the remainder
+    # might be greater than the length of the list.
+    # I just realized this is unnecessary.
+    while mod > length:
+        div += length
+        mod -= length
+    # Create a new list the size of x with the base number of rabbits.
+    result = [div] * length
+    # Distribute the leftovers from earlier across the list.
+    for i in xrange(mod):
+        result[i] += 1
+    # Return the most common element.
+    return most_common(result)
 
-x = [1, 4, 1, 1, 1, 3]
-print answer(x)
+#for y in range(1000):
+l = randrange(2, 100)
+x = [randrange(0, 1000000) for _ in xrange(l)]
+#x = [1, 2]
+print(answer(x))
