@@ -24,10 +24,14 @@ def answer(x):
     for i in xrange(mod):
         result[i] += 1
     # Return the most common element.
-    return most_common(result)
+    return most_common(result), result
+
+def answer2(census):
+    size = len(census)
+    return size if sum(census) % size == 0 else (size-1)
 
 #for y in range(1000):
-l = randrange(2, 100)
-x = [randrange(0, 1000000) for _ in xrange(l)]
-#x = [1, 2]
-print(answer(x))
+#l = randrange(2, 100)
+#x = [randrange(0, 1000000) for _ in xrange(l)]
+x = [0, 0, 0, 0, 22]
+print(answer2(x))
