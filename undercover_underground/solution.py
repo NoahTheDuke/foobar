@@ -1,37 +1,49 @@
-from math import factorial
-from collections import Counter
-from operator import mul
-from functools import reduce
+import math
 
 # See: http://jacquerie.github.io/google-foobar-post-mortem/
 # and: http://oeis.org/A123527
 # and: http://oeis.org/A062734
 def answer(n, k):
-    if (k < n - 1) or (k > (n * n - 1) / 2):
+    return "{}".format(q(n, k))
+
+choose_memo = {}
+qq_memo = {}
+
+def q(n, k):
+    if (k < n - 1) or (k > (n * n - 1) // 2):
         return 0
-    elif k == n - 1:
-        result = n**(n - 2)
-    else:
-        result = qq(n, k)
-    return str(result)
+    if (n, k) in qq_memo:
+        return qq_memo[(n, k)]
+    if k == n - 1:
+        answer = long(n**(n - 2))
+        qq_memo[(n, k)] = answer
+        return answer
 
-def qq(n, k):
-    res = choose(n * (n - 1) / 2, k)
-    for m in range(n - 2 + 1):
-        res1 = 0
-        for p in range(max(0, k - 1/2 * (m + 1) * m), k - m + 1):
-            res1 = res1 + choose((n - 1 - m) * (n - 2 - m) / 2, p) * qq(m + 1, k - p)
-        res = res - choose(n - 1, m) * res1
-    return res
+    first = choose(n * (n - 1) // 2, k)
+    second = get_second(n, k)
 
-memoization = {}
+    answer = long(first - second)
+    qq_memo[(n, k)] = answer
+    return int(answer)
+
+def get_second(n, k):
+    total = 0L
+    for m in xrange(0, n - 1):
+        coeff = choose(n - 1, m)
+        total2 = 0L
+        for p in xrange(0, k + 1):
+            coeff2 = choose(((n - 1 - m) * (n - 2 - m)) / 2, p)
+            temp = q(m + 1, k - p)
+            total2 += coeff2 * temp
+        total += coeff * total2
+    return total
 
 def choose(n, k):
     """
     A fast way to calculate binomial coefficients by Andrew Dalke (contrib).
     """
-    if (n, k) in memoization:
-        return memoization[(n, k)]
+    if (n, k) in choose_memo:
+        return choose_memo[(n, k)]
 
     m = n
     if 0 <= k <= n:
@@ -41,50 +53,13 @@ def choose(n, k):
             ntok *= n
             ktok *= t
             n -= 1
-        result =  ntok // ktok
+        result =  long(ntok // ktok)
     else:
-        result = 0
+        result = 0L
 
-    memoization[(m, k)] = result
+    choose_memo[(m, k)] = result
 
     return result
-
-def prod(iterable):
-    return reduce(mul, iterable, 1)
-
-def gf2(n):
-    s = 0
-    a = accelAsc(n)
-    for p in a:
-        q = len(p)
-        mcf1 = factorial(n)/prod(factorial(li) for li in p)
-        cntr = Counter(p)
-        mcf2 = factorial(q)/prod(factorial(li) for _, li in cntr.items())
-        u = 1 # WHERE DOES u COME FROM
-        s = s + ((-1)**(q + 1)) / q * mcf1 * mcf2 * (1 + u) ** sum((li * (li - 1) / 2) for li in p)
-    return str(s)
-
-def accelAsc(n):
-    a = [0 for i in range(n + 1)]
-    k = 1
-    y = n - 1
-    while k != 0:
-        x = a[k - 1] + 1
-        k -= 1
-        while 2*x <= y:
-            a[k] = x
-            y -= x
-            k += 1
-        l = k + 1
-        while x <= y:
-            a[k] = x
-            a[l] = y
-            yield a[:k + 2]
-            x += 1
-            y -= 1
-        a[k] = x + y
-        y = x + y - 1
-        yield a[:k + 1]
 
 #for n in xrange(2, 21):
     #for k in xrange(n-1, (n * (n - 1)) // 2 + 1):
