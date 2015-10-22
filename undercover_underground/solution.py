@@ -27,10 +27,10 @@ def q(n, k):
     return int(answer)
 
 def get_second(n, k):
-    total = 0L
+    total = 0
     for m in xrange(0, n - 1):
         coeff = choose(n - 1, m)
-        total2 = 0L
+        total2 = 0
         for p in xrange(0, k + 1):
             coeff2 = choose(((n - 1 - m) * (n - 2 - m)) / 2, p)
             temp = q(m + 1, k - p)
@@ -55,7 +55,7 @@ def choose(n, k):
             n -= 1
         result =  long(ntok // ktok)
     else:
-        result = 0L
+        result = 0
 
     choose_memo[(m, k)] = result
 
