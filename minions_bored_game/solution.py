@@ -25,7 +25,7 @@ def solve(t, n):
             print('m[j] += (j+1<n-1 and m2[j+1]) -> %s' % m[j])
         print('m: ', m)
 
-    S = m[n-1]
+    S = m[-1]
     return S % 123454321
 
 
